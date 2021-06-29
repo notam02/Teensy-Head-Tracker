@@ -4,7 +4,7 @@
 
   CHANGELOG
       2017-06-20: - initial release
-      
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -22,14 +22,17 @@
 #include <Adafruit_BNO055.h>
 #include <Adafruit_Sensor.h>
 #include <Arduino.h>
+#include <Bounce.h>
 #include <EEPROM.h>
 
 // BNO055 Instance
 Adafruit_BNO055 bno = Adafruit_BNO055();
 
+#define DEBUG true
+
 // Pins and Settings
 #define LED 13
-#define button 3 // <-- should be an interrupt pin
+#define button 3
 #define invSwitch 4
 #define quatSwitch 5
 #define pi 3.1415926536
@@ -44,6 +47,8 @@ volatile bool newButtonState = 0;
 int action = 0;
 int calibrationState = 0;
 
+Bounce mainButton(button, debounceDelay);
+
 uint16_t lastW = 63;
 uint16_t newW = 63;
 uint16_t lastX = 63;
@@ -57,16 +62,27 @@ uint16_t newZ = 63;
 imu::Quaternion qCal, qCalLeft, qCalRight, qIdleConj = {1, 0, 0, 0};
 imu::Quaternion qGravIdle, qGravCal, quat, steering, qRaw;
 
-imu::Vector<3> gRaw;         //
+imu::Vector<3> gRaw; //
 const imu::Vector<3> refVector = {1, 0, 0};
 imu::Vector<3> vGravIdle, vGravCal;
-imu::Vector<3> ypr; //yaw pitch and roll angles
+imu::Vector<3> ypr; // yaw pitch and roll angles
 
 imu::Vector<3> getGravity();
 
+void blink(int delayTime, size_t numBlinks = 4) {
+  for (size_t blink_num = 0; blink_num < numBlinks; blink_num++) {
+    digitalWrite(LED, HIGH);
+    delay(delayTime / 2);
+    digitalWrite(LED, LOW);
+    delay(delayTime / 2);
+  }
+}
+
 void buttonChange() {
   lastChangeTime = millis();
-  buttonState = digitalRead(button);
+  mainButton.update();
+  buttonState = mainButton.read();
+  /* buttonState = digitalRead(button); */
   newButtonState = 1;
 }
 
@@ -84,12 +100,14 @@ imu::Vector<3> getGravity() {
 
 void calibrate() {
   imu::Vector<3> g, gCal, x, y, z;
-  //g = refVector.getRotated(&qGravIdle); //g = qGravIdle.rotateVector(refVector);
+  // g = refVector.getRotated(&qGravIdle); //g =
+  // qGravIdle.rotateVector(refVector);
   g = vGravIdle;
-  z = g.scale(-1); 
+  z = g.scale(-1);
   z.normalize();
 
-  //gCal = refVector.getRotated(&qGravCal); //gCal = qGravCal.rotateVector(refVector);
+  // gCal = refVector.getRotated(&qGravCal); //gCal =
+  // qGravCal.rotateVector(refVector);
   gCal = vGravCal;
   y = gCal.cross(g);
   y.normalize();
@@ -112,6 +130,7 @@ void calibrate() {
   EEPROM.put(qCalAddr, qCal);
 
   resetOrientation();
+
 }
 
 // ================================================================
@@ -119,7 +138,10 @@ void calibrate() {
 // ================================================================
 
 void setup() {
-  /* MIDI.begin(MIDI_CHANNEL_OMNI); // use this with HIDUINO */
+  if (DEBUG) {
+    while (!Serial)
+      ;
+  }
 
   if (!bno.begin(bno.OPERATION_MODE_IMUPLUS)) {
     /* There was a problem detecting the BNO055 ... check your connections */
@@ -151,9 +173,14 @@ void loop() {
   // ============== BUTTON CHECK ROUTINE ==========================
   action = 0; // do nothing, just chill... for now!
 
-  if (newButtonState && (millis() - lastChangeTime > debounceDelay)) {
-    if (buttonState) {
+  if (newButtonState) {
+    if (!buttonState) {
       // pressed
+      if (DEBUG)
+        Serial.println("Pressed");
+
+      blink(25);
+
       lastPressTime = lastChangeTime;
       if (millis() - lastPressTime > 1000) {
         action = 2;         // held longer than ^ ms
@@ -165,8 +192,16 @@ void loop() {
       newButtonState = 0;
       lastReleaseTime = lastChangeTime;
       action = 1; // short button click
+      if (DEBUG)
+        Serial.println("released");
+
+      blink(50);
+
       if (lastReleaseTime - lastPressTime > 1000) {
         action = 3; // release after hold > ^ ms
+
+        if (DEBUG)
+          Serial.println("long press release");
       }
     }
   }
@@ -243,6 +278,7 @@ void loop() {
       vGravCal = getGravity();
       calibrate();
       calibrationState = 0;
+
     } else {
       qIdleConj = qRaw.conjugate();
     }
