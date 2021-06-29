@@ -24,7 +24,23 @@ need of third party software or expensive hardware (e.g. optical tracking
 system) and - above all - without the need of an expensive multichannel
 audio playback system.
 
-# Calibration process
+## Hardware
+
+- Teensy 3.2
+- [Adafruit BNO055 sensor](https://www.adafruit.com/product/2472)
+
+## Software requirements:
+- Platformio
+- Teensyduino
+
+## Uploading to the Teensy
+
+With Platformio installed, download this repository and move into it using a terminal. Then run:
+```
+platformio run -t upload
+```
+
+## Calibration process
 
 When first put into operation, the MrHeadTracker won't start sending rotation data until a full calibration was performed.
 To do so:
@@ -37,7 +53,7 @@ To do so:
 
 The calibration data is saved into the EEPROM memory and has to be done only when the mounting position has changed. 
 
-# Changing front orientation
+## Changing front orientation
 For changing the desired front orientation just press and release the push button shortly (below 1s). 
 
 This is useful if the sensor starts drifting.
