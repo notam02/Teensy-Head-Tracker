@@ -41,7 +41,10 @@ Adafruit_BNO055 bno = Adafruit_BNO055();
 #define qCalAddr 0 // EEPROM qCal address
 #define debounceDelay 50
 
-/* enum ButtonAction { StartCalibration,  } */
+// Disable / enable the quaternion switch and inv switch, otherwise values are
+// hard coded
+constexpr bool quatSwitchActive = false;
+constexpr bool invSwitchActive = false;
 
 volatile unsigned long lastChangeTime, lastPressTime, lastReleaseTime = 0;
 volatile bool buttonState = 1;
@@ -159,8 +162,14 @@ void setup() {
   }
 
   pinMode(button, INPUT_PULLUP);
-  pinMode(invSwitch, INPUT_PULLUP);
-  pinMode(quatSwitch, INPUT_PULLUP);
+  if (invSwitchActive) {
+    pinMode(invSwitch, INPUT_PULLUP);
+  }
+
+  if (quatSwitchActive) {
+    pinMode(quatSwitch, INPUT_PULLUP);
+  }
+
   attachInterrupt(digitalPinToInterrupt(button), buttonChange, CHANGE);
 
   pinMode(LED, OUTPUT);
@@ -223,12 +232,16 @@ void loop() {
   quat = qCalLeft * steering;  // transform it to calibrated coordinate system
   quat = quat * qCalRight;
 
-  if (digitalRead(invSwitch) == LOW) {
+  if (invSwitchActive && digitalRead(invSwitch) == LOW) {
     quat = quat.conjugate();
   }
 
   // ============== SEND MIDI ROUTINE ===========================
-  /* midiMode = digitalRead(quatSwitch); */
+
+  if (quatSwitchActive) {
+    midiMode = digitalRead(quatSwitch);
+  };
+
   switch (midiMode) {
   case MidiSendMode::Quaternion: // send quaternion data
     newW = (uint16_t)(oneTo14 * (quat.w() + 1));
