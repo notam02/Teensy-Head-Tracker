@@ -28,7 +28,7 @@
 // BNO055 Instance
 Adafruit_BNO055 bno = Adafruit_BNO055();
 
-#define DEBUG true
+#define DEBUG false
 
 // Pins and Settings
 #define LED 13
@@ -40,6 +40,8 @@ Adafruit_BNO055 bno = Adafruit_BNO055();
 #define oneTo14 8191
 #define qCalAddr 0 // EEPROM qCal address
 #define debounceDelay 50
+
+/* enum ButtonAction { StartCalibration,  } */
 
 volatile unsigned long lastChangeTime, lastPressTime, lastReleaseTime = 0;
 volatile bool buttonState = 1;
@@ -57,6 +59,9 @@ uint16_t lastY = 63;
 uint16_t newY = 63;
 uint16_t lastZ = 63;
 uint16_t newZ = 63;
+
+enum MidiSendMode { Quaternion, YawPitchRoll };
+auto midiMode = MidiSendMode::Quaternion;
 
 // Quaternions and Vectors
 imu::Quaternion qCal, qCalLeft, qCalRight, qIdleConj = {1, 0, 0, 0};
@@ -131,6 +136,8 @@ void calibrate() {
 
   resetOrientation();
 
+  if (DEBUG)
+    Serial.println("done calibrating");
 }
 
 // ================================================================
@@ -182,10 +189,12 @@ void loop() {
       blink(25);
 
       lastPressTime = lastChangeTime;
-      if (millis() - lastPressTime > 1000) {
-        action = 2;         // held longer than ^ ms
-        newButtonState = 0; // only once!
-      }
+      /* if (millis() - lastPressTime > 1000) { */
+      /*   if (DEBUG) */
+      /*     Serial.println("Long press"); */
+      /*   action = 2;         // held longer than ^ ms */
+      /*   newButtonState = 0; // only once! */
+      /* } */
     }
     {
       // released
@@ -195,10 +204,10 @@ void loop() {
       if (DEBUG)
         Serial.println("released");
 
-      blink(50);
+      blink(10);
 
       if (lastReleaseTime - lastPressTime > 1000) {
-        action = 3; // release after hold > ^ ms
+        action = 2; // release after hold > ^ ms
 
         if (DEBUG)
           Serial.println("long press release");
@@ -219,7 +228,9 @@ void loop() {
   }
 
   // ============== SEND MIDI ROUTINE ===========================
-  if (digitalRead(quatSwitch) == LOW) { // send quaternion data
+  /* midiMode = digitalRead(quatSwitch); */
+  switch (midiMode) {
+  case MidiSendMode::Quaternion: // send quaternion data
     newW = (uint16_t)(oneTo14 * (quat.w() + 1));
     newX = (uint16_t)(oneTo14 * (quat.x() + 1));
     newY = (uint16_t)(oneTo14 * (quat.y() + 1));
@@ -246,9 +257,9 @@ void loop() {
     lastX = newX;
     lastY = newY;
     lastZ = newZ;
-  } else // send yaw pitch roll data
-  {
+    break;
 
+  case MidiSendMode::YawPitchRoll:
     ypr = quat.toEuler();
     newZ = (uint16_t)(radTo14 * ((ypr[0] + pi)));
     newY = (uint16_t)(radTo14 * ((ypr[1] + pi)));
@@ -269,7 +280,8 @@ void loop() {
     lastX = newX;
     lastY = newY;
     lastZ = newZ;
-  }
+    break;
+  };
 
   // ============== BUTTON ACTION ROUTINE ======================
   switch (action) {
