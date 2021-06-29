@@ -1,6 +1,6 @@
 # Teensy Head Tracker
 
-Teensy Head Tracker is a fork of IEM's [Mr Head Tracker](https://git.iem.at/DIY/MrHeadTracker). The main change is switching the hardware setup to use a Teensy to simplify things.
+Teensy Head Tracker is a fork of IEM's [Mr Head Tracker](https://git.iem.at/DIY/MrHeadTracker). The main change is switching the hardware setup to use a Teensy to simplify things. The head tracker transmits the data as 14 bit midi and no middle ware is necessary to use it.
 
 Teensy Head Tracker's main use case is the compensation of the user's head movement during
 binaural synthesis of a 3D audio scene. Therefore, the device is mounted on
@@ -28,6 +28,20 @@ audio playback system.
 
 - Teensy 3.2
 - [Adafruit BNO055 sensor](https://www.adafruit.com/product/2472) ( [Mouser link](https://no.mouser.com/ProductDetail/Adafruit/2472?qs=N%2F3wi2MvZWDmk8dteqdybw%3D%3D) )
+
+## Connections
+
+### BNO055 sensor
+BNO055 	<-> 	TEENSY 
+VIN 	<-> 	3.3V
+GND 	<-> 	GND
+SDA 	<-> 	18
+SCL 	<-> 	19
+
+### Button
+BUTTON 	<-> 	TEENSY
+PIN A 	<-> 	3
+PIN B 	<-> 	GND
 
 ## Software requirements:
 - Platformio
