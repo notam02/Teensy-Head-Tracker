@@ -49,6 +49,10 @@ PIN A 	<-> 	3
 
 PIN B 	<-> 	GND
 
+## TODO
+
+- Enclosure
+
 ## Software requirements:
 - Platformio
 - Teensyduino
