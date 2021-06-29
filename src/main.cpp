@@ -46,6 +46,11 @@ Adafruit_BNO055 bno = Adafruit_BNO055();
 constexpr bool quatSwitchActive = false;
 constexpr bool invSwitchActive = false;
 
+constexpr bool invertQuaternion = true;
+enum MidiSendMode { Quaternion, YawPitchRoll };
+auto midiMode = MidiSendMode::YawPitchRoll;
+
+// --------------------------------------------
 volatile unsigned long lastChangeTime, lastPressTime, lastReleaseTime = 0;
 volatile bool buttonState = 1;
 volatile bool newButtonState = 0;
@@ -63,8 +68,6 @@ uint16_t newY = 63;
 uint16_t lastZ = 63;
 uint16_t newZ = 63;
 
-enum MidiSendMode { Quaternion, YawPitchRoll };
-auto midiMode = MidiSendMode::Quaternion;
 
 // Quaternions and Vectors
 imu::Quaternion qCal, qCalLeft, qCalRight, qIdleConj = {1, 0, 0, 0};
@@ -232,7 +235,10 @@ void loop() {
   quat = qCalLeft * steering;  // transform it to calibrated coordinate system
   quat = quat * qCalRight;
 
-  if (invSwitchActive && digitalRead(invSwitch) == LOW) {
+  /* if (invSwitchActive && digitalRead(invSwitch) == LOW) { */
+  /*   quat = quat.conjugate(); */
+  /* } */
+  if (invertQuaternion) {
     quat = quat.conjugate();
   }
 
