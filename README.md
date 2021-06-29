@@ -33,14 +33,20 @@ audio playback system.
 
 ### BNO055 sensor
 BNO055 	<-> 	TEENSY 
+
 VIN 	<-> 	3.3V
+
 GND 	<-> 	GND
+
 SDA 	<-> 	18
+
 SCL 	<-> 	19
 
 ### Button
 BUTTON 	<-> 	TEENSY
+
 PIN A 	<-> 	3
+
 PIN B 	<-> 	GND
 
 ## Software requirements:
