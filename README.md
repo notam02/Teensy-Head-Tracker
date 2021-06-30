@@ -83,16 +83,11 @@ For changing the desired front orientation just press and release the push butto
 This is useful if the sensor starts drifting.
 
 ## Using it in Reaper
-Usage in REAPER
-
-1. Enable input from device and input for control messages  for MrHeadTracker in Reaper's MIDI Devices settings. If the device doesn't appear, click Reset all MIDI devices, close and reopen the settings again.
-2. Load and open the ambix-rotator Plugin (or similar plugin) to a Track (before the decoder plugin)
-3. Button "Param" -> "FX parameter list" -> "Parameter modulation/MIDI link" -> Yaw/Pitch/Roll
-4. Activate Checkbox "Link from MIDI or FX parameter"
-5. Button "(none)" -> "MIDI" -> "CC 14-bit" -> "16/48"
-6. On Track: Choose Input Signal: "Input: MIDI" -> MrHeadTracker -> All or single Channel
-7. On Track: Arm Record
-8. On Track: Activate Monitoring (ON)
+Usage in REAPER:
+1. Add the "IEM SceneRotator" to an ambisonics track (before the decoder)
+2. Open up the SceneRotator plugin
+3. At the bottom of the panel, click the device drop down and choose "Teensy Head Tracker"
+4. In the scheme, choose the scheme corresponding to the mode of the head tracker. By default it is Yaw Pitch Roll Direct. If you haven't changed it, choose "Mr HT YPR Direct"
 
 ## Changes from Mr Head Tracker
 
