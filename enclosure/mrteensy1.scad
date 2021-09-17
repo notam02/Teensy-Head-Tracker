@@ -1,6 +1,6 @@
 include </home/mads/code/scadlib/teensy32.scad>
 include </home/mads/code/scadlib/pushbutton1.scad>
-$fn=40;
+$fn=70;
 
 module adabno055(){
 	/* PCB */
@@ -35,27 +35,38 @@ bnoWidth=21;
 module pushB(){
 		rotate([0,0,90]) translate([-8,-teensy32Width()/2,8]) pushbutton1();
 }
+module bottom(){
+	union(){
+		// BOTTOM
+		difference(){
+			difference(){
+				// The main / outer shape
+				color("lightcyan") translate([-5,-14,-2]) cube([outerWidth,outerLen, electronicsHeight]);
 
-// BOTTOM
-difference(){
-	difference(){
-		// The main / outer shape
-		color("lightcyan") translate([-5,-14,-2]) cube([outerWidth,outerLen, electronicsHeight]);
+				// The inner shape
+				hull(){
+					color("orangered") cube([max(bnoWidth, teensy32Width()),teensy32Len(), electronicsHeight]);
+					pushB();
 
-		// The inner shape
-		hull(){
-			color("orangered") cube([max(bnoWidth, teensy32Width()),teensy32Len(), electronicsHeight]);
-			pushB();
+				}
 
+				textCarve();
+				/* teensy32(padding=2, extraUsbLen=30); */
+			}
+
+			teensy32USBPlug(3,20);
 		}
 
-		textCarve();
-		/* teensy32(padding=2, extraUsbLen=30); */
+		// Bow
+		translate([-5,-14,-electronicsHeight])
+			difference(){
+				cube([outerWidth,outerLen, electronicsHeight]);
+				bowDia=110;
+				rotate([90,0,90])translate([outerLen/2,-40,-8])cylinder(h=outerWidth*2,d=bowDia,center=false);
+			}
 	}
-
-	teensy32USBPlug(3,20);
-
 }
+
 module textCarve(){
 	textDepth=1;
 	textSize=4;
@@ -67,20 +78,25 @@ module textCarve(){
 
 // TOP
 lidHeight=3;
-translate([50,0,0]) difference(){
-	color("thistle")
-		translate([-5,-14,-2])
-		cube([outerWidth,outerLen, lidHeight]);
+module top(){
+	translate([50,0,0]) difference(){
+		color("thistle")
+			translate([-5,-14,-2])
+			cube([outerWidth,outerLen, lidHeight]);
 
-	// Cutout for reset button
-	rotate([0,0,90])
-		translate([2.6,-teensy32Width()/2,-lidHeight])
-		cylinder(h=lidHeight*2,d=3,center=false);
+		// Cutout for reset button
+		rotate([0,0,90])
+			translate([2.6,-teensy32Width()/2,-lidHeight])
+			cylinder(h=lidHeight*2,d=3,center=false);
 
-	// Cutout for main button
-	rotate([0,0,90])
-		translate([-8,-teensy32Width()/2,-lidHeight])
-		cylinder(h=lidHeight*2,d=6.75,center=false);
+		// Cutout for main button
+		rotate([0,0,90])
+			translate([-8,-teensy32Width()/2,-lidHeight])
+			cylinder(h=lidHeight*2,d=6.75,center=false);
+	}
 }
+
+bottom();
+top();
 
 #headtrackerElectronics();
