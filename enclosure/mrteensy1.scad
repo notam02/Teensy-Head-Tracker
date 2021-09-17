@@ -1,24 +1,29 @@
-module teensy(){
+include <scadlib/teensy32.scad>
+include <scadlib/pushbutton1.scad>
 
+module adabno055(){
 	/* PCB */
-	width=17.7;
-	len=35.5;
-	thick=1.6;
-	color("green") cube([width,len,thick],false);
+	pcbw=21;
+	pcbthick=1.6;
+	pcblen=27;
 
-	/* Button */
-	butWidth=4.5; butLen=3.2; butHeight=2.3;
-	color("white")
-		translate([(width-butWidth)/2.0, 2.6, thick])
-		cube([butWidth, butLen, butHeight], false);
+	// PCB inputs. Probably not entirely precise
+	for (i = [0:4]) {
+		pinDia=1.9;
+		pinSpacing=1.25;
+		offsetFromEdge=6.16;
+		color("red") translate([pinDia,offsetFromEdge+(i*(pinSpacing+pinDia)),pcbthick])circle(d=pinDia);
+	}
 
-	/* USB */
-	uwidth=8.5;
-	uheight=3.3;
-	ulen=8.5;
-	color("grey")
-		translate([(width-uwidth)/2.0, len-ulen+1, thick])
-		cube([uwidth, ulen, uheight], false);
+	cube([pcbw, pcblen, pcbthick]);
 }
 
-teensy();
+module headtrackerElectronics(){
+	teensyw=17.7;
+	spaceBetweenTwoBoards=12;
+	translate([teensyw-21,8,spaceBetweenTwoBoards]) adabno055();
+	teensy32();
+	rotate([0,0,90]) translate([-6,-teensyw/2,8]) pushbutton1();
+}
+
+headtrackerElectronics();
