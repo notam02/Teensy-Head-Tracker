@@ -1,0 +1,3 @@
+[submodule "enclosure/scadlib"]
+	path = enclosure/scadlib
+	url = https://codeberg.org/madskjeldgaard/scadlib
