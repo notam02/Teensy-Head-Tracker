@@ -51,6 +51,7 @@ module bottom(){
 				}
 
 				textCarve();
+				translate([1.5,1.5,electronicsHeight-(lidHeight/2.0)])top();
 				/* teensy32(padding=2, extraUsbLen=30); */
 			}
 
@@ -79,24 +80,28 @@ module textCarve(){
 // TOP
 lidHeight=3;
 module top(){
-	translate([50,0,0]) difference(){
+	 subtractWidth=3;
+
+	 translate([0,0,-lidHeight])
+	 difference(){
 		color("thistle")
-			translate([-5,-14,-2])
-			cube([outerWidth,outerLen, lidHeight]);
+			translate([-5,-14,0])
+			cube([outerWidth-subtractWidth,outerLen, lidHeight]);
 
 		// Cutout for reset button
 		rotate([0,0,90])
-			translate([2.6,-teensy32Width()/2,-lidHeight])
+			translate([2.6,-teensy32Width()/2 + (subtractWidth/2),-lidHeight/2])
 			cylinder(h=lidHeight*2,d=3,center=false);
 
 		// Cutout for main button
 		rotate([0,0,90])
-			translate([-8,-teensy32Width()/2,-lidHeight])
+			translate([-8,-teensy32Width()/2+ (subtractWidth/2),-lidHeight/2])
 			cylinder(h=lidHeight*2,d=6.75,center=false);
 	}
 }
 
 bottom();
-top();
 
-#headtrackerElectronics();
+translate([50,0,0]) top();
+
+//#headtrackerElectronics();
