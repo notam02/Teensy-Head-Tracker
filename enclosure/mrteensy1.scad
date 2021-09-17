@@ -19,14 +19,13 @@ module adabno055(){
 	color("blue") cube([pcbw, pcblen, pcbthick]);
 }
 
-teensyw=17.7;
 spaceBetweenTwoBoards=18;
-electronicsHeight=1.6*2+spaceBetweenTwoBoards;
+electronicsHeight=teensy32Thickness()*2+spaceBetweenTwoBoards;
 
 module headtrackerElectronics(){
-	rotate([0,0,90]) translate([-6,-teensyw/2,8]) pushbutton1();
-	translate([teensyw-21,8,spaceBetweenTwoBoards]) adabno055();
-	teensy32();
+	rotate([0,0,90]) translate([-6,-teensy32Width()/2,8]) pushbutton1();
+	translate([0,8,spaceBetweenTwoBoards]) adabno055();
+	teensy32(0,0);
 }
 
 outerWidth=30;
@@ -39,41 +38,49 @@ module pushB(){
 
 // BOTTOM
 difference(){
-	// The main / outer shape
-	color("green") translate([-5,-14,-2]) cube([outerWidth,outerLen, electronicsHeight]);
+	difference(){
+		// The main / outer shape
+		color("lightcyan") translate([-5,-14,-2]) cube([outerWidth,outerLen, electronicsHeight]);
 
-	// The inner shape
-	hull(){
-		color("orangered") cube([max(bnoWidth, teensy32Width()),teensy32Len(), electronicsHeight]);
-		pushB();
+		// The inner shape
+		hull(){
+			color("orangered") cube([max(bnoWidth, teensy32Width()),teensy32Len(), electronicsHeight]);
+			pushB();
+
+		}
+
+		textCarve();
+		/* teensy32(padding=2, extraUsbLen=30); */
 	}
 
-	teensy32(padding=2, extraUsbLen=20);
+	teensy32USBPlug(3,20);
+
+}
+module textCarve(){
+	textDepth=1;
+	textSize=4;
+	thisfont="SourceCodePro";
+	rotate([90,0,90])
+		translate([-5,electronicsHeight/2.0,outerWidth-textSize-textDepth])
+			linear_extrude(textDepth) text("NOTAM <3 IEM", textSize, thisfont);
 }
 
 // TOP
 lidHeight=3;
 translate([50,0,0]) difference(){
-	color("green")
+	color("thistle")
 		translate([-5,-14,-2])
 		cube([outerWidth,outerLen, lidHeight]);
 
+	// Cutout for reset button
 	rotate([0,0,90])
-		translate([0,-teensy32Width()/2,-lidHeight])
+		translate([2.6,-teensy32Width()/2,-lidHeight])
+		cylinder(h=lidHeight*2,d=3,center=false);
+
+	// Cutout for main button
+	rotate([0,0,90])
+		translate([-8,-teensy32Width()/2,-lidHeight])
 		cylinder(h=lidHeight*2,d=6.75,center=false);
 }
 
-/* translate([50,0,0]) color("red") rotate([0,0,90]) translate([-8,-teensy32Width()/2,8]) cylinder(h=(lidHeight*2),d=6.75,center=false); */
-		/* rotate([0,0,90]) translate([-6,-teensy32Width()/2,8]) pushbutton1(); */
-/* teensy32(extraUsbLen=30); */
-
-/* difference(){ */
-
-/* union(){ */
-/* 	rotate([0,0,90]) translate([-6,-teensyw/2,8]) pushbutton1(); */
-/* 	translate([teensyw-21,8,spaceBetweenTwoBoards]) adabno055(); */
-/* 	teensy32(); */
-/* } */
-
-/* } */
-/* 	/1* translate([teensyw-21,8,spaceBetweenTwoBoards]) adabno055(); *1/ */
+#headtrackerElectronics();
