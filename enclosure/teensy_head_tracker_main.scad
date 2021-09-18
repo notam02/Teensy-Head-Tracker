@@ -95,13 +95,12 @@ module top(){
 
 		// Cutout for main button
 		rotate([0,0,90])
-			translate([-8,-teensy32Width()/2+ (subtractWidth/2),-lidHeight/2])
-			cylinder(h=lidHeight*2,d=6.75,center=false);
+			translate([-8,-teensy32Width()/2 + (subtractWidth/2),-lidHeight/2])
+			cylinder(h=lidHeight*2,d=7.0,center=false);
 	}
 }
 
-bottom();
-
-translate([50,0,0]) top();
+/* bottom(); */
+/* translate([50,0,electronicsHeight-lidHeight]) top(); */
 
 //#headtrackerElectronics();
