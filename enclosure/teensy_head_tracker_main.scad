@@ -65,7 +65,7 @@ module bottom(){
 		translate([-5,-14,-electronicsHeight])
 			difference(){
 				cube([outerWidth,outerLen, electronicsHeight]);
-				bowDia=110;
+				bowDia=120;
 				rotate([90,0,90])translate([outerLen/2,-40,-8])cylinder(h=outerWidth*2,d=bowDia,center=false);
 			}
 	}
@@ -83,7 +83,7 @@ module textCarve(){
 // TOP
 lidHeight=3;
 module top(){
-	 subtractWidth=3;
+	 subtractWidth=lidPadding*2;
 	 subtractLength=lidPadding;
 
 	 translate([0,0,-lidHeight])
