@@ -19,8 +19,9 @@ module adabno055(){
 	color("blue") cube([pcbw, pcblen, pcbthick]);
 }
 
-spaceBetweenTwoBoards=18;
+spaceBetweenTwoBoards=pushb1HeightToPanel()+1;
 electronicsHeight=teensy32Thickness()*2+spaceBetweenTwoBoards;
+echo("inner height: ", electronicsHeight);
 
 module headtrackerElectronics(){
 	rotate([0,0,90]) translate([-6,-teensy32Width()/2,8]) pushbutton1();
