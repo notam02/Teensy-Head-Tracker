@@ -35,6 +35,9 @@ bnoWidth=21;
 module pushB(){
 		rotate([0,0,90]) translate([-8,-teensy32Width()/2,8]) pushbutton1();
 }
+
+lidPadding=1.5;
+
 module bottom(){
 	union(){
 		// BOTTOM
@@ -51,7 +54,7 @@ module bottom(){
 				}
 
 				textCarve();
-				translate([1.5,1.5,electronicsHeight-(lidHeight/2.0)])top();
+				translate([lidPadding,lidPadding,electronicsHeight-(lidHeight/2.0)])top();
 				/* teensy32(padding=2, extraUsbLen=30); */
 			}
 
@@ -81,12 +84,13 @@ module textCarve(){
 lidHeight=3;
 module top(){
 	 subtractWidth=3;
+	 subtractLength=lidPadding;
 
 	 translate([0,0,-lidHeight])
 	 difference(){
 		color("thistle")
 			translate([-5,-14,0])
-			cube([outerWidth-subtractWidth,outerLen, lidHeight]);
+			cube([outerWidth-subtractWidth,outerLen-subtractLength, lidHeight]);
 
 		// Cutout for reset button
 		rotate([0,0,90])
@@ -101,6 +105,6 @@ module top(){
 }
 
 // Uncomment to see debugging electronics
-/* bottom(); */
-/* translate([50,0,electronicsHeight-lidHeight]) top(); */
+bottom();
+translate([50,0,electronicsHeight-lidHeight]) top();
 /* #headtrackerElectronics(); */
