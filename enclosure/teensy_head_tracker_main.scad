@@ -100,7 +100,7 @@ module top(){
 	}
 }
 
+// Uncomment to see debugging electronics
 /* bottom(); */
 /* translate([50,0,electronicsHeight-lidHeight]) top(); */
-
-//#headtrackerElectronics();
+/* #headtrackerElectronics(); */
