@@ -52,9 +52,11 @@ PIN A 	<-> 	3
 
 PIN B 	<-> 	GND
 
-## TODO
+## Enclosure
 
-- Enclosure
+![enclosure](enclosure/teensy_head_tracker_bottom.png)
+
+This repository contains a 3D printable enclosure that fits on to a pair of headphones. There are stl-files you can import into your 3D printer slicer of choice and openscad files if you want to change the models or mess around with them.
 
 ## Software requirements:
 - Platformio
