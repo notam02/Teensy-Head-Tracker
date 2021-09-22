@@ -1,10 +1,6 @@
 # Teensy Head Tracker
 ![prototype1](assets/thtfinished.jpg)
 
-![prototype1](assets/teensy-head-proto1.jpg)
-
-![prototype2](assets/teensy-head-proto2.jpg)
-
 Teensy Head Tracker is a fork of IEM's [Mr Head Tracker](https://git.iem.at/DIY/MrHeadTracker). The main change is switching the hardware setup to use a Teensy to simplify things. The head tracker transmits the data as 14 bit midi and no middle ware is necessary to use it.
 
 Teensy Head Tracker's main use case is the compensation of the user's head movement during
