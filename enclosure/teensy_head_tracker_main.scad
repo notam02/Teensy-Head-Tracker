@@ -56,7 +56,8 @@ module bottom(){
 				}
 
 				// Cutout teensy
-				color("orangered") cube([teensy32Width(),teensy32Len(), electronicsHeight]);
+				padding=1;
+				color("orangered") translate([0,-padding,0])cube([teensy32Width()+padding,teensy32Len()+padding, electronicsHeight]);
 				textCarve();
 				translate([lidPadding,lidPadding,electronicsHeight-(lidHeight/2.0)])top();
 				/* teensy32(padding=2, extraUsbLen=30); */
