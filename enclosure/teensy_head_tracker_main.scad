@@ -34,7 +34,7 @@ outerLen=53;
 bnoWidth=21;
 
 module pushB(){
-		rotate([0,0,90]) translate([-8,-teensy32Width()/2,8]) pushbutton1();
+		rotate([0,0,90]) translate([-8,-teensy32Width()/2,4]) pushbutton1();
 }
 
 lidPadding=1.5;
