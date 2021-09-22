@@ -1,4 +1,6 @@
 # Teensy Head Tracker
+![prototype1](assets/thtfinished.jpg)
+
 ![prototype1](assets/teensy-head-proto1.jpg)
 
 ![prototype2](assets/teensy-head-proto2.jpg)
