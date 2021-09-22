@@ -100,4 +100,5 @@ Usage in REAPER:
 - Converted to platformio project
 - Use Bounce for debouncing
 - Various small changes to the code
+- Create 3D printable enclosure
 
