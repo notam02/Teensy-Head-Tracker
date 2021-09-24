@@ -23,7 +23,7 @@ And then IEM's VSTPlugin extension for SuperCollider:
 (
 
 // Set the ambisonic order
-~order = 3;
+~order = 7;
 
 /**********************************************/
 
@@ -65,6 +65,12 @@ s.waitForBoot{
 	~rollMidi.func_({|val|
 		~headtrackFX.sceneRot.set('Roll Angle', val)
 	});
+
+	// Set normalization to N3D to match ATK's format (IEM is SN3D by default)
+	if(AtkHoa.format[1] == 'n3d', {
+		~headtrackFX.sceneRot.set('Normalization', 0);
+		~headtrackFX.binauralDec.set('Input Normalization', 0);
+	})
 
 	// Open guis
 	~headtrackFX.sceneRot.gui;
