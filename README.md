@@ -85,6 +85,11 @@ For changing the desired front orientation just press and release the push butto
 
 This is useful if the sensor starts drifting.
 
+
+## Using it in SuperCollider
+
+See [iem-headrotator.scd](examples/iem-headrotator.scd) for a full SuperCollider example.
+
 ## Using it in Reaper
 Usage in REAPER:
 1. Add the "IEM SceneRotator" to an ambisonics track (before the decoder)
