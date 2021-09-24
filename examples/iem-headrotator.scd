@@ -70,7 +70,7 @@ s.waitForBoot{
 	if(AtkHoa.format[1] == 'n3d', {
 		~headtrackFX.sceneRot.set('Normalization', 0);
 		~headtrackFX.binauralDec.set('Input Normalization', 0);
-	})
+	});
 
 	// Open guis
 	~headtrackFX.sceneRot.gui;
