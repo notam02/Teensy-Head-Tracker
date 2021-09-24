@@ -19,8 +19,9 @@ module adabno055(){
 	color("blue") cube([pcbw, pcblen, pcbthick]);
 }
 
-spaceBetweenTwoBoards=18;
+spaceBetweenTwoBoards=pushb1HeightToPanel()+2;
 electronicsHeight=teensy32Thickness()*2+spaceBetweenTwoBoards;
+echo("inner height: ", electronicsHeight);
 
 module headtrackerElectronics(){
 	rotate([0,0,90]) translate([-6,-teensy32Width()/2,8]) pushbutton1();
@@ -33,8 +34,11 @@ outerLen=53;
 bnoWidth=21;
 
 module pushB(){
-		rotate([0,0,90]) translate([-8,-teensy32Width()/2,8]) pushbutton1();
+		rotate([0,0,90]) translate([-8,-teensy32Width()/2,4]) pushbutton1();
 }
+
+lidPadding=1.5;
+
 module bottom(){
 	union(){
 		// BOTTOM
@@ -45,24 +49,28 @@ module bottom(){
 
 				// The inner shape
 				hull(){
-					color("orangered") cube([max(bnoWidth, teensy32Width()),teensy32Len(), electronicsHeight]);
+					// This is what results in the "ledge" for the teensy
+					color("orangered") translate([0,0,teensy32Thickness()*2.0])cube([max(bnoWidth, teensy32Width()),teensy32Len(), electronicsHeight]);
 					pushB();
 
 				}
 
+				// Cutout teensy
+				padding=1;
+				color("orangered") translate([0,-padding,0])cube([teensy32Width()+padding,teensy32Len()+padding, electronicsHeight]);
 				textCarve();
-				translate([1.5,1.5,electronicsHeight-(lidHeight/2.0)])top();
+				translate([lidPadding,lidPadding,electronicsHeight-(lidHeight/2.0)])top();
 				/* teensy32(padding=2, extraUsbLen=30); */
 			}
 
-			teensy32USBPlug(3,20);
+			teensy32USBPlug(4,20);
 		}
 
 		// Bow
 		translate([-5,-14,-electronicsHeight])
 			difference(){
 				cube([outerWidth,outerLen, electronicsHeight]);
-				bowDia=110;
+				bowDia=115;
 				rotate([90,0,90])translate([outerLen/2,-40,-8])cylinder(h=outerWidth*2,d=bowDia,center=false);
 			}
 	}
@@ -80,13 +88,14 @@ module textCarve(){
 // TOP
 lidHeight=3;
 module top(){
-	 subtractWidth=3;
+	 subtractWidth=lidPadding*2;
+	 subtractLength=lidPadding;
 
 	 translate([0,0,-lidHeight])
 	 difference(){
 		color("thistle")
 			translate([-5,-14,0])
-			cube([outerWidth-subtractWidth,outerLen, lidHeight]);
+			cube([outerWidth-subtractWidth,outerLen-subtractLength, lidHeight]);
 
 		// Cutout for reset button
 		rotate([0,0,90])
