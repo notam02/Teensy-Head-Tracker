@@ -1,7 +1,5 @@
 # Teensy Head Tracker
-![prototype1](assets/teensy-head-proto1.jpg)
-
-![prototype2](assets/teensy-head-proto2.jpg)
+![prototype1](assets/thtfinished.jpg)
 
 Teensy Head Tracker is a fork of IEM's [Mr Head Tracker](https://git.iem.at/DIY/MrHeadTracker). The main change is switching the hardware setup to use a Teensy to simplify things. The head tracker transmits the data as 14 bit midi and no middle ware is necessary to use it.
 
@@ -52,9 +50,11 @@ PIN A 	<-> 	3
 
 PIN B 	<-> 	GND
 
-## TODO
+## Enclosure
 
-- Enclosure
+![enclosure](enclosure/teensy_head_tracker_bottom.png)
+
+This repository contains a 3D printable enclosure that fits on to a pair of headphones. There are stl-files you can import into your 3D printer slicer of choice and openscad files if you want to change the models or mess around with them.
 
 ## Software requirements:
 - Platformio
@@ -103,4 +103,5 @@ Usage in REAPER:
 - Converted to platformio project
 - Use Bounce for debouncing
 - Various small changes to the code
+- Create 3D printable enclosure
 
