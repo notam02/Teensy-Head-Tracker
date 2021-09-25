@@ -138,7 +138,21 @@ s.waitForBoot{
 	ServerTree.add(~treeFunc, Server.local);
 
 	// Connect midi controller
-	MIDIIn.connectAll;
+	if(MIDIClient.initialized.not, {
+		"MIDIClient not initialized... initializing now".postln;
+		MIDIClient.init;
+	});
+
+	MIDIClient.sources.do{|src, srcNum|
+		if(src.device == "Teensy Head Tracker", {
+			if(try{MIDIIn.isTeensyHeadTrackerConnected}.isNil, {
+				if(MIDIClient.sources.any({|e| e.device=="Teensy Head Tracker"}), {
+					"Connecting Teensy Head Tracker".postln;
+					MIDIIn.connect(srcNum, src).addUniqueMethod(\isTeensyHeadTrackerConnected, {true});
+				});
+			}, {"Teensy Head Tracker is already connected... (device is busy)".postln});
+		});
+	};
 
 	s.sync;
 	~treeFunc.value;
