@@ -7,8 +7,6 @@ It expects the SuperCollider user to be using ATK's ambisonics format:
 AtkHoa.format;
 AtkHoa.refRadius;
 
-Note that this setup will remove the plugins when you press ctrl/cmd-. to hardstop the sound.
-
 ---------------------------
 
 DEPENDENCIES:
@@ -37,11 +35,10 @@ And then IEM's VSTPlugin extension for SuperCollider:
 
 s.waitForBoot{
 	~numChans = ((~order+1)**2).asInteger;
-	~headtrackerGroup = Group.after(1);
 
 	~iemBinDecRefRadius = 3.25;
 
-	SynthDef(\hoainsert, { |bus|
+	SynthDef(\headtracker, { |bus|
 		// HOA input
 		var sig = In.ar(bus, ~numChans);
 
@@ -82,35 +79,74 @@ s.waitForBoot{
 
 	s.sync;
 
-	~headtrackFX = VSTPluginController.collect(Synth(\hoainsert, [\bus, 0], ~headtrackerGroup, addAction:\addToTail));
+	// This function is called every time the user presses hard stop/CMdPeriod to stop the sound
+	// It respawns the synths with the VST plugins and remaps the midi controller
+	~treeFunc = {
+		"Adding % order ambisonics headtracker to main output".format(~order).postln;
 
-	~headtrackFX.sceneRot.open("SceneRotator");
-	s.sync;
+		forkIfNeeded{
+			~headtrackerGroup = Group.after(1);
 
-	~headtrackFX.binauralDec.open("BinauralDecoder");
-	s.sync;
+			s.sync;
+
+			/*
+
+			Open plugins
+
+			*/
+			~headtrackFX = VSTPluginController.collect(Synth(\headtracker, [\bus, 0], ~headtrackerGroup, addAction:\addToTail));
+			s.sync;
+
+			~headtrackFX.sceneRot.open("SceneRotator");
+
+			s.sync;
+			~headtrackFX.binauralDec.open("BinauralDecoder");
+
+			/*
+
+			Map head tracker to scene rotator
+
+			*/
+			s.sync;
+			~yawMidi = ~yawMidi ?? {CC14.new(cc1: 16,  cc2: 48,  chan: 0,  fix: true,  normalizeValues: true)};
+			~yawMidi.func_({|val|
+				if(~headtrackFX.sceneRot.loaded, {
+					~headtrackFX.sceneRot.set('Yaw Angle', val);
+				});
+			});
+
+			s.sync;
+			~pitchMidi = ~pitchMidi ?? {CC14.new(cc1: 17,  cc2: 49,  chan: 0,  fix: true,  normalizeValues: true)};
+			~pitchMidi.func_({|val|
+				if(~headtrackFX.sceneRot.loaded,{
+					~headtrackFX.sceneRot.set('Pitch Angle', val);
+				});
+			});
+
+			s.sync;
+			~rollMidi = ~rollMidi ?? { CC14.new(cc1: 18,  cc2: 50,  chan: 0,  fix: true,  normalizeValues: true)};
+			~rollMidi.func_({|val|
+				if(~headtrackFX.sceneRot.loaded,{
+					~headtrackFX.sceneRot.set('Roll Angle', val)
+				});
+			});
+		}
+
+	};
+
+	// This will respawn the synth on hardstop/cmd-period. Inspired by SafetyNet
+	ServerTree.add(~treeFunc, Server.local);
 
 	// Connect midi controller
 	MIDIIn.connectAll;
 
 	s.sync;
-	~yawMidi = CC14.new(cc1: 16,  cc2: 48,  chan: 0,  fix: false,  normalizeValues: true);
-	~yawMidi.func_({|val|
-		~headtrackFX.sceneRot.set('Yaw Angle', val);
-	});
+	~treeFunc.value;
 
-	~pitchMidi = CC14.new(cc1: 17,  cc2: 49,  chan: 0,  fix: false,  normalizeValues: true);
-	~pitchMidi.func_({|val|
-		~headtrackFX.sceneRot.set('Pitch Angle', val);
-	});
-
-	~rollMidi = CC14.new(cc1: 18,  cc2: 50,  chan: 0,  fix: false,  normalizeValues: true);
-	~rollMidi.func_({|val|
-		~headtrackFX.sceneRot.set('Roll Angle', val)
-	});
+	s.sync;
+	~headtrackFX.sceneRot.gui;
 
 	// Open guis
-	~headtrackFX.sceneRot.gui;
-	~headtrackFX.binauralDec.gui;
+	// ~headtrackFX.binauralDec.gui;
 }
 )
