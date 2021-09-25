@@ -72,7 +72,10 @@ s.waitForBoot{
 		Ambisonic reference radius: 3.25
 		*/
 
+		// This will be the SceneRotator
 		sig = VSTPlugin.ar(sig, ~numChans, id: \sceneRot);
+
+		// This will be the BinauralDecoder
 		sig = VSTPlugin.ar(sig, ~numChans, id: \binauralDec);
 		ReplaceOut.ar(bus, sig);
 	}).add;
