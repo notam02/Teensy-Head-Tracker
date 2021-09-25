@@ -2,6 +2,11 @@
 
 This is an example patch for SuperCollider which uses the IEM plugins as main output fx with the Teensy Head Tracker setup to rotate the sound scene using SceneRotator and decode to headphones using BinauralDecoder.
 
+It expects the SuperCollider user to be using ATK's ambisonics format:
+
+AtkHoa.format;
+AtkHoa.refRadius;
+
 Note that this setup will remove the plugins when you press ctrl/cmd-. to hardstop the sound.
 
 ---------------------------
@@ -12,6 +17,9 @@ To make this script work, you need to install the following dependencies:
 
 CC14 for 14 bit midi support:
 Quarks.install("CC14");
+
+ATK
+Quarks.install("atk-sc3");
 
 And IEM plugins:
 "https://plugins.iem.at/".openOS;
@@ -31,8 +39,40 @@ s.waitForBoot{
 	~numChans = ((~order+1)**2).asInteger;
 	~headtrackerGroup = Group.after(1);
 
-	SynthDef(\hoainsert, { arg bus;
-		var sig = VSTPlugin.ar(In.ar(bus, ~numChans), ~numChans, id: \sceneRot);
+	~iemBinDecRefRadius = 3.25;
+
+	SynthDef(\hoainsert, { |bus|
+		// HOA input
+		var sig = In.ar(bus, ~numChans);
+
+		// Format exchange from ATK's HOA-format to what IEM expects (ambix) with the binauralDecoder's expected radius.
+		// (for source, see https://github.com/ambisonictoolkit/atk-sc3/issues/95)
+		// exchange reference radius
+		sig = HoaNFCtrl.ar(
+			in: sig,
+			encRadius: AtkHoa.refRadius,
+			decRadius: ~iemBinDecRefRadius,
+			order: ~order
+		);
+
+		// exchange normalisation
+		sig = HoaDecodeMatrix.ar(
+			in: sig,
+			hoaMatrix: HoaMatrixDecoder.newFormat(\ambix, ~order)
+		);
+
+		/*
+		the resulting signal can be
+		fed directly to the IEM BinauralDecoder plugin
+		and is encoded as:
+
+		Ambisonic order: 7
+		Ambisonic component ordering: ACN
+		Ambisonic component normalisation: SN3D
+		Ambisonic reference radius: 3.25
+		*/
+
+		sig = VSTPlugin.ar(sig, ~numChans, id: \sceneRot);
 		sig = VSTPlugin.ar(sig, ~numChans, id: \binauralDec);
 		ReplaceOut.ar(bus, sig);
 	}).add;
@@ -64,12 +104,6 @@ s.waitForBoot{
 	~rollMidi = CC14.new(cc1: 18,  cc2: 50,  chan: 0,  fix: false,  normalizeValues: true);
 	~rollMidi.func_({|val|
 		~headtrackFX.sceneRot.set('Roll Angle', val)
-	});
-
-	// Set normalization to N3D to match ATK's format (IEM is SN3D by default)
-	if(AtkHoa.format[1] == 'n3d', {
-		~headtrackFX.sceneRot.set('Normalization', 0);
-		~headtrackFX.binauralDec.set('Input Normalization', 0);
 	});
 
 	// Open guis
