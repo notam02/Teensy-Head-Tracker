@@ -1,5 +1,5 @@
-include </home/mads/code/scadlib/teensy32.scad>
-include </home/mads/code/scadlib/pushbutton1.scad>
+include <scadlib/teensy32.scad>
+include <scadlib/pushbutton1.scad>
 $fn=70;
 
 module adabno055(){
