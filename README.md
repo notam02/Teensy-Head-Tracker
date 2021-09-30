@@ -88,7 +88,7 @@ This is useful if the sensor starts drifting.
 
 ## Using it in SuperCollider
 
-See [iem-headrotator.scd](examples/iem-headrotator.scd) for a full SuperCollider example.
+[The TeensyHeadTracker.quark SuperCollider package contains a plug-and-play style interface](https://github.com/notam02/TeensyHeadTracker.quark), otherwise see [examples/iem-headrotator.scd](examples/iem-headrotator.scd).
 
 ## Using it in Reaper
 Usage in REAPER:
