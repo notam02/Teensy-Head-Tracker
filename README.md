@@ -27,8 +27,8 @@ audio playback system.
 
 ## Hardware
 
-- Teensy 3.2
-- [Adafruit BNO055 sensor](https://www.adafruit.com/product/2472) ( [Mouser link](https://no.mouser.com/ProductDetail/Adafruit/2472?qs=N%2F3wi2MvZWDmk8dteqdybw%3D%3D) )
+- Teensy LC (cheaper, just as good) or Teensy 3.2
+- [Adafruit BNO055 sensor](https://www.adafruit.com/product/2472) ( [Mouser link](https://no.mouser.com/ProductDetail/Adafruit/2472?qs=N%2F3wi2MvZWDmk8dteqdybw%3D%3D) ) or [this board, cheaper and just as good](https://www.adafruit.com/product/4646)
 
 ## Connections
 
