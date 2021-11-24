@@ -92,21 +92,41 @@ module top(){
 	 subtractLength=lidPadding;
 
 	 translate([0,0,-lidHeight])
-	 difference(){
-		color("thistle")
-			translate([-5,-14,0])
-			cube([outerWidth-subtractWidth,outerLen-subtractLength, lidHeight]);
+		 difference(){
+			 color("thistle")
+				 translate([-5,-14,0])
+				 cube([outerWidth-subtractWidth,outerLen-subtractLength, lidHeight]);
 
-		// Cutout for reset button
-		rotate([0,0,90])
-			translate([2.6,-teensy32Width()/2 + (subtractWidth/2),-lidHeight/2])
-			cylinder(h=lidHeight*2,d=3,center=false);
+			 // Cutout for reset button
+			 rotate([0,0,90])
+				 translate([2.6,-teensy32Width()/2 + (subtractWidth/2),-lidHeight/2])
+				 cylinder(h=lidHeight*2,d=3,center=false);
 
-		// Cutout for main button
-		rotate([0,0,90])
-			translate([-8,-teensy32Width()/2 + (subtractWidth/2),-lidHeight/2])
-			cylinder(h=lidHeight*2,d=7.0,center=false);
-	}
+			 // Cutout for main button
+			 rotate([0,0,90])
+				 translate([-8,-teensy32Width()/2 + (subtractWidth/2),-lidHeight/2])
+				 cylinder(h=lidHeight*2,d=7.0,center=false);
+
+		 }
+
+	 // Supports
+		supportWidth = 2.5;
+		supportDepth = 2.5;
+		supportHeigt = electronicsHeight - teensy32Thickness() - 5; // - 5 is kinda arbitrary
+		distanceFromFront = 3.6;
+
+		// Front right
+		translate([0,teensy32Len()-distanceFromFront, -supportHeigt-lidHeight]) cube([supportWidth, supportDepth, supportHeigt], center=false);
+
+		// Front left
+		translate([teensy32Width()-supportWidth,teensy32Len()-distanceFromFront, -supportHeigt-lidHeight]) cube([supportWidth, supportDepth, supportHeigt], center=false);
+
+		// Back left
+		translate([teensy32Width()-supportWidth,0, -supportHeigt-lidHeight]) cube([supportWidth, supportDepth, supportHeigt], center=false);
+
+		// Back right
+		translate([0,0, -supportHeigt-lidHeight]) cube([supportWidth, supportDepth, supportHeigt], center=false);
+
 }
 
 // Uncomment to see debugging electronics
